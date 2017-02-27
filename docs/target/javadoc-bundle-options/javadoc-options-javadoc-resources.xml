@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<javadocOptions>
+  <docletArtifacts>
+    <docletArtifact />
+  </docletArtifacts>
+  <tagletArtifacts>
+    <tagletArtifact />
+  </tagletArtifacts>
+  <links>
+    <link>http://docs.spring.io/spring-framework/docs/${spring-framework.version}/javadoc-api/</link>
+    <link>http://docs.spring.io/spring-shell/docs/current/api/</link>
+  </links>
+  <javadocResourcesDirectory>src/main/javadoc</javadocResourcesDirectory>
+</javadocOptions>

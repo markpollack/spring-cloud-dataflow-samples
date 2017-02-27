@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main">
+  <zip destfile="/home/mpollack/projects/spring-cloud-dataflow-samples/docs/target/spring-cloud-dataflow-development-docs-1.0.0.BUILD-SNAPSHOT.zip">
+    <zipfileset prefix="reference/htmlsingle" dir="/home/mpollack/projects/spring-cloud-dataflow-samples/docs/target/generated-docs">
+      <include name="index.html"/>
+      <include name="images/**"/>
+    </zipfileset>
+  </zip>
+</target>
+</project>
