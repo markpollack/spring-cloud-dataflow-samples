@@ -1,30 +1,30 @@
-[[dataflow-documentation]]
-= Spring Cloud Data Flow Overview
+[[dev-documentation]]
+= Spring Cloud Data Flow Development Overview
 
-[partintro]
 --
-This section provides a brief overview of the Spring Cloud Data Flow reference documentation. Think of
-it as map for the rest of the document. You can read this reference guide in a linear
-fashion, or you can skip sections if something doesn't interest you.
+This documentation takes a development first approach to learning how Spring Cloud Data Flow can be used to solve data integration use cases.  These use cases fall into two broad categories, short lived and long lived integration applications.  We will develop and test applications in each category and deploy them individually and using Spring Cloud Data Flow.  This section provides the necessary background to understand the different projects that will be used in the sample applications.
 --
 
-[[dataflow-documentation-intro]]
-== Introducing Spring Cloud Data Flow
-Spring Cloud Data Flow is a cloud-native orchestration service for composable microservice applications on modern runtimes. With Spring Cloud Data Flow, developers can create and orchestrate data pipelines for common use cases such as data ingest, real-time analytics, and data import/export.
+[[dev-application-types]]
+== Types of applications
+Short lived data integration applications are typically referred to as link:https://en.wikipedia.org/wiki/Batch_processing[Batch processing] applications.  These applications take a group of records, for example lines in a CSV file, and peform several operational steps on them.  The steps typically transform input records to a different format and enrich the data.  Batch processing jobs are typically scheduled to run one or several times a day, either based on time or availability of the input record set. The input record set may be the output from another batch application.
 
-Spring Cloud Data Flow is the cloud native redesign of link:http://projects.spring.io/spring-xd/[Spring XD] – a project that aimed to simplify development of Big Data applications. The stream and batch modules from Spring XD are refactored as Spring Boot based link:http://cloud.spring.io/spring-cloud-stream-app-starters/[stream] and link:http://cloud.spring.io/spring-cloud-task-app-starters/[task/batch] microservice applications respectively. These applications are now autonomous deployment units and they can "natively" run in modern runtimes such as Cloud Foundry, Apache YARN, Apache Mesos, and Kubernetes.
+Long lived data integration applications are typically referred to an Enterprise Application Integration (EAI) applications and more recently, Stream Processing applications.  What these two application types have in common is that the set of data that is being processed is essenetially infinite, hence the need to have the applications running all of the time.
 
-Spring Cloud Data Flow offers a collection of patterns and best practices for microservices-based distributed streaming and task/batch data pipelines.
+Enterprise integration applications enable several enterprise systems to exchange data.  For example a CRM system with a Payment system.  A large library of link:http://www.enterpriseintegrationpatterns.com/[EAI patterns] has emerged over the years to handle architectural and implementation challanges.  A common technology used in EAI applications is messaging middleware, whic is used as a means to exchange data between applications.
 
-=== Features
+Stream processings applications have evolved out of systems where a large number of events need to be stored and often processed in real time.  For example, Internet companies need to store and analyze in real time content such as page views, tweets, or measurements sent from IoT devices.  These systems often have low latency and high scalability requirements.  Several Stream processing platforms been created to address the requirements in this space, for example, Spark, Flink and Google Cloud Dataflow.  These platforms platforms run on distributed computational runtime.  Spring Cloud Data Flow is a Stream processing platform but is architected as a set of collaborating independent applications that communicate over messaging middleware.
 
-* Develop using DSL, REST-APIs, Dashboard, and the drag-and-drop GUI - Flo
-* Create, unit-test, troubleshoot and manage microservice applications in isolation
-* Build data pipelines rapidly using the out-of-the-box stream and task/batch applications
-* Consume microservice applications as maven or docker artifacts
-* Scale data pipelines without interrupting data flows
-* Orchestrate data-centric applications on a variety of modern runtime platforms including Cloud Foundry, Apache YARN, Apache Mesos, and Kubernetes
-* Take advantage of metrics, health checks, and the remote management of each microservice application
+[[dev-foundational-libraries-types]]
+== Foundational Libraries
+For short lived applications, the link:https://cloud.spring.io/spring-cloud-task/[Spring Cloud Task] project provides the basis to launch and keep track of an application's start time, exit state and completion time.  Spring Cloud Task applications are often just a bit of glue code around another Batch processing library.  One such library is link:http://projects.spring.io/spring-batch/[Spring Batch]. Spring Batch create a batch job that contains multiple steps of execution, with each step's success or failure being tracked in a database.  We provide a few pre-build Spring Cloud Task applications that you can use immediately.  These applications live in the link:http://cloud.spring.io/spring-cloud-task-app-starters/[Spring Cloud Task App Starters] project. 
+
+For long lived applications, the link:https://cloud.spring.io/spring-cloud-stream/[Spring Cloud Stream] project provides the basis to create Stream processing applications.  Spring Cloud Stream automatically configures the middleware to have certain charateristcs important for Stream Processing. These are link:http://docs.spring.io/spring-cloud-stream/docs/Brooklyn.SR1/reference/htmlsingle/#_persistent_publish_subscribe_support[persistent pub/sub semantics], link:http://docs.spring.io/spring-cloud-stream/docs/Brooklyn.SR1/reference/htmlsingle/#consumer-groups[consumer groups], and link:http://docs.spring.io/spring-cloud-stream/docs/Brooklyn.SR1/reference/htmlsingle/#partitioning[partitioning].  While these three key charateristics originated from the Apache Kafka messaging middleware project, Spring Cloud Stream can apply these same charateristics across different middleware vendors such as RabbitMQ and Google PubSub.  While Stream processing applications are the core domain of Spring Cloud Stream, a Spring Cloud Stream application can be often be used in a traditional EAI style solution.
+
+Spring Cloud Stream essentially handles the details of the middleware configuration. It provides a programming model that presents itself as an abstract set of input and outputs that bind to the underlying middleware.  To read, write or process data, Spring Cloud Stream is often paired with the link:https://projects.spring.io/spring-integration/[Spring Integration] library.  This provides the foundation to create applications that act as adapters to a variety of systems, such as databases, gemfire, hdfs, redis, and messaging middleware.
+We provide a many pre-built Spring Cloud Stream applications that you can use immediately.  These applications live in the link:http://cloud.spring.io/spring-cloud-stream-app-starters/[Spring Cloud Stream App Starts] project.
+
+At the bottom of the foundational library stack, Spring Cloud Task and Spring Cloud Stream applications are also link:https://projects.spring.io/spring-boot/[Spring Boot] applications.  This gives them functionality such as health checks, security, configurable logging, monitoring and management functionality, as well as executable JAR packaging.
 
 
 

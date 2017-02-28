@@ -19,6 +19,8 @@ Sabby Anandan; Marius Bogoevici; Eric Bottard; Mark Fisher; Ilayaperumal Gopinat
 // ======================================================================================
 
 include::overview.adoc[]
+include::stream-apps.adoc[]
+include::stream-scdf.adoc[]
 include::getting-started.adoc[]
 include::appendix-contributing.adoc[]
 
