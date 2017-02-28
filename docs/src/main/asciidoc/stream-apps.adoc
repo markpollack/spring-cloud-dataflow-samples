@@ -2,15 +2,56 @@
 = Developing Stream applications
 
 --
-In this section we will cover how to create, test and run Spring Cloud Stream applications.  Other resources you 
+In this section we will cover how to create, test and run Spring Cloud Stream applications locally and on Cloud Foundry.  We will also show how to map these applications into Spring Cloud Data Flow and deploy them locally and on Cloud Foundry.
 --
 
-[[dev-application-types]]
-== Types of applications
-Short lived data integration applications are typically referred to as link:https://en.wikipedia.org/wiki/Batch_processing[Batch processing] applications.  These applications take a group of records, for example lines in a CSV file, and peform several operational steps on them, typically transforming the input records to a different format and enriching the data them along the way.  Batch processing jobs are typically scheduled to run one or several times a day, either based on time or availability of the input record set produced from another batch application.
+[[running-existing-apps]]
+== Running existing applications
 
-Long lived data integration applications are typically referred to an Enterprise Application Integration (EAI) applications and more recently, Stream Processing applications.  What these two application types have in common is that the set of data that is being processed is essenetially infinite, hence the need to have the applications running all of the time.
+run cmd line equivalent of http | log
 
-Enterprise integration applications enable several enterprise systems to exchange data, for example a CRM system with a Payment system.  A large library of EAI patterns has emerged over the years to handle architectural and implementation challanges.  A common technology used in EAI applications is messaging middleware as a means to exchange data between applications.
+== Creating and testing a custom processor application
 
-Stream processings applications have evolved out of systems where a large number of events need to be stored and often processed in real time.  For example, Internet companies need to store and analyze in real time content such as page views, tweets, or measurements sent from IoT devices.  These systems often have low latency and high scalability requirements.  Several Stream processing platforms been created to address the requirements in this space, for example, Spark, Flink and Google Cloud Dataflow.  The platforms platforms run on distributed computational runtime.  Spring Cloud Data Flow is Stream processing platform but is architected as a collaborating set of independent applications.
+create, uppercase and unit test it.
+
+run cmd line equivalent of http | uppercase | log
+
+== Mapping the application to Spring Cloud Data Flow
+
+register apps, create stream and deploy it locally
+
+== Integration testing locally
+
+use the new integration testing library locally
+
+== Integration testing on Cloud Foundry
+
+== Deploying on Cloud Foundry
+
+[[dev-customizing-stream-apps]]
+= Customizing Stream applications
+
+== Changing the messaging middleware
+
+== Changing the serialization
+
+== Changing the number of instances
+
+no partitioning, basic scale up.
+
+== Composing applications
+
+
+[[dev-multiple-streamstopologies]]
+= Collaborating streams
+
+Show More complex topologies
+
+== real-time analytics
+
+== Fan in/Fan out
+
+[[dev-data-partitioning]]
+= Data Partitioning
+
+

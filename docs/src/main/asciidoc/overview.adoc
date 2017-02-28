@@ -26,5 +26,3 @@ We provide a many pre-built Spring Cloud Stream applications that you can use im
 
 At the bottom of the foundational library stack, Spring Cloud Task and Spring Cloud Stream applications are also link:https://projects.spring.io/spring-boot/[Spring Boot] applications.  This gives them functionality such as health checks, security, configurable logging, monitoring and management functionality, as well as executable JAR packaging.
 
-
-
