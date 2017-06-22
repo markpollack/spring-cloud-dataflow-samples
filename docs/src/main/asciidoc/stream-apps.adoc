@@ -107,7 +107,7 @@ The log sink application will then show the following output
 2017-03-17 15:30:17.825  WARN 22710 --- [_qquaYekbQ0nA-1] log-sink                                 : {"id":"1","temperature":"100"}
 ----
 
-
+[[writing-a-unit-test]]
 == Creating and testing a custom processor application
 
 Now let us create an application that does some processing on the output of the
@@ -116,11 +116,11 @@ http source and then send data to the log sink.  We will make use of the link:li
 Visit the link:https://start.spring.io/[Spring Initialzr] site and create a new
 Maven project with the group name `io.spring.stream.sample` and the artifact name `transformer`.  In the dependencies text box, type `stream rabbit` to select the Spring Cloud Stream dependency that will use the RabbitMQ binder.
 
-Unzip the project and bring the project into your favorite IDE.  Create a class called Transformer in the `io.spring.stream.sample` package with the following contents.
+Unzip the project and bring the project into your favorite IDE.  Create a class called Transformer in the `io.spring.stream.sample.transformer` package with the following contents.
 
 [source,java]
 ----
-package io.spring.stream.sample;
+package io.spring.stream.sample.transformer;
 
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.Output;
@@ -149,7 +149,7 @@ simple unit test for the Transformer class.  An example of this is shown below.
 
 [source,java]
 ----
-package io.spring.stream.sample;
+package io.spring.stream.sample.transformer;
 
 
 import org.junit.Test;
@@ -166,7 +166,7 @@ import static org.assertj.core.api.Assertions.entry;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TransformApplicationTests {
+public class TransformerApplicationTests {
 
     @Autowired
     private Transformer transformer;
@@ -421,7 +421,70 @@ requiredGroups configuration properties.
 
 == Integration testing locally
 
-use the new integration testing library locally
+xref:writing-a-unit-test[Earlier] we wrote a unit test for the processor application. Spring Cloud Stream also offers the ability
+to test applications in the context of Spring Cloud Stream, via a special _test Binder_.
+
+To do this, add the following dependency to your project:
+[source, xml]
+----
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-stream-test-support</artifactId>
+        <scope>test</scope>
+    </dependency>
+----
+
+This test Binder comes with a Boot `AutoConfiguration` class that has high precedence and will replace the normal Binder in your tests.
+
+[WARNING]
+Be sure *not* to package this dependency in your production code, or it will replace your binder of choice. In the above snippet, the maven dependency scope is `test`, which is crucial.
+
+Then, you can write a more integration oriented test as follows:
+
+[source, java]
+----
+package io.spring.stream.sample.transformer;
+
+import java.util.Map;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.stream.messaging.Processor;
+import org.springframework.cloud.stream.test.binder.MessageCollector;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.GenericMessage;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.junit.Assert.assertThat;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class TransformerIntegrationTests {
+
+    @Autowired
+    private MessageCollector messageCollector;
+
+    @Autowired
+    private Processor processor;
+
+    @Test
+    public void testWiring() {
+        Message<String> message = new GenericMessage<>("{\"temperature\": 100}");
+        this.processor.input().send(message);
+        Message<Map<String, ?>> received = (Message<Map<String, ?>>) this.messageCollector.forChannel(this.processor.output()).poll();
+        assertThat(received.getPayload(), hasEntry("temp_val", 100));
+        assertThat(received.getPayload(), hasEntry("sensor_id", "-1"));
+    }
+
+}
+----
+
+Notice how the input message is JSON sent _via_ the `input()` channel of the processor. Similarly, it is received (timeouts are supported)
+on the `output()` channel.
 
 == Integration testing on Cloud Foundry
 
